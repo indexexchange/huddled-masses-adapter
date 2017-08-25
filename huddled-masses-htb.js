@@ -148,11 +148,27 @@ function HuddledMassesHtb(configs) {
          */
 
         /* ---------------------- PUT CODE HERE ------------------------------------ */
-        var queryObj = {};
+        var parcel = returnParcels[0];
+        var protocol = Browser.getProtocol();
+        var host = Browser.getHostname();
+        var page = Browser.getPageUrl();
+        page = page.replace(protocol+"//"+host,"");
+        var queryObj = {
+            c:"b",
+            m:"b",
+            indexHB:1,
+            placementId: parcel.placementId,
+            host:host,
+            page:page,
+            language:(typeof(navigator) !== "undefined" && navigator.language)?navigator.language:null,
+            deviceWidth:Browser.getScreenWidth(),
+            deviceHeight:Browser.getScreenHeight(),
+            secure: (protocol === "https:")?1:0
+        };
         var callbackId = System.generateUniqueId();
 
         /* Change this to your bidder endpoint.*/
-        var baseUrl = Browser.getProtocol() + '//someAdapterEndpoint.com/bid';
+        var baseUrl = protocol + '//huddledmassessupply.com';
 
         /* ---------------- Craft bid request using the above returnParcels --------- */
 
@@ -216,8 +232,6 @@ function HuddledMassesHtb(configs) {
      */
     function __parseResponse(sessionId, adResponse, returnParcels) {
 
-        var unusedReturnParcels = returnParcels.slice();
-
         /* =============================================================================
          * STEP 4  | Parse & store demand response
          * -----------------------------------------------------------------------------
@@ -258,7 +272,7 @@ function HuddledMassesHtb(configs) {
                  * key to a key that represents the placement in the configuration and in the bid responses.
                  */
 
-                if (curReturnParcel.xSlotRef.someCriteria === bids[i].someCriteria) {
+                if (curReturnParcel.xSlotRef.placementId === bids[i].ad_id) {
                     curBid = bids[i];
                     break;
                 }
@@ -283,10 +297,10 @@ function HuddledMassesHtb(configs) {
             /* Using the above variable, curBid, extract various information about the bid and assign it to
             * these local variables */
 
-            var bidPrice = curBid.price; /* the bid price for the given slot */
+            var bidPrice = curBid.cpm; /* the bid price for the given slot */
             var bidSize = [curBid.width, curBid.height]; /* the size of the given slot */
             var bidCreative = curBid.adm; /* the creative/adm for the given slot that will be rendered if is the winner. */
-            var bidDealId = curBid.dealid; /* the dealId if applicable for this slot. */
+            var bidDealId = curBid.deal; /* the dealId if applicable for this slot. */
 
             /* ---------------------------------------------------------------------------------------*/
 
@@ -395,8 +409,8 @@ function HuddledMassesHtb(configs) {
                 pmid: 'ix_hudm_dealid'
             },
             lineItemType: Constants.LineItemTypes.ID_AND_SIZE,
-            callbackType: Partner.CallbackTypes.ID, // Callback type, please refer to the readme for details
-            architecture: Partner.Architectures.SRA, // Request architecture, please refer to the readme for details
+            callbackType: Partner.CallbackTypes.NONE, // Callback type, please refer to the readme for details
+            architecture: Partner.Architectures.MRA, // Request architecture, please refer to the readme for details
             requestType: Partner.RequestTypes.ANY // Request type, jsonp, ajax, or any.
         };
         /* ---------------------------------------------------------------------------------------*/
@@ -419,7 +433,7 @@ function HuddledMassesHtb(configs) {
         var bidTransformerConfigs = {
             //? if (FEATURES.GPT_LINE_ITEMS) {
             targeting: {
-                inputCentsMultiplier: 1, // Input is in cents
+                inputCentsMultiplier: 100, // Input is in cents
                 outputCentsDivisor: 1, // Output as cents
                 outputPrecision: 0, // With 0 decimal places
                 roundingType: 'FLOOR', // jshint ignore:line
@@ -435,7 +449,7 @@ function HuddledMassesHtb(configs) {
             //? }
             //? if (FEATURES.RETURN_PRICE) {
             price: {
-                inputCentsMultiplier: 1, // Input is in cents
+                inputCentsMultiplier: 100, // Input is in cents
                 outputCentsDivisor: 1, // Output as cents
                 outputPrecision: 0, // With 0 decimal places
                 roundingType: 'NONE',

@@ -9,20 +9,29 @@ var libraryStubData = {
         }
     },
     'browser.js': {
+        getHostname: function () {
+          return "localhost"
+        },
         getProtocol: function () {
-            return 'http://';
+            return 'http:';
         },
         getReferrer: function () {
             return 'localhost';
         },
         getPageUrl: function () {
-            return 'localhost';
+            return 'http://localhost/';
         },
         getUserAgent: function () {
             return 'desktop';
         },
         getLanguage: function () {
             return 'en-US';
+        },
+        getScreenWidth: function () {
+            return 800;
+        },
+        getScreenHeight: function () {
+            return 600;
         }
     },
     'classify.js': {
