@@ -24,22 +24,22 @@ Below you will find everything you need to complete the certification process an
 
 ## <a name='Repository'></a>Repository Structure
 * `README.md`             -This is the main documentation file which should contain everything you need to complete the certification process. If anything is unclear, please refer to this document first.
-* `huddled-masses-htb.js` - This is your partner module file, by default it contains a template divided into multiple sections which need to be completed.
-* `huddled-masses-htb-validator.js` - This is the validator file for the configuration object that will be passed into your module.
-* `huddled-masses-htb-exports.js` - A file that contains all of the modules exports (i.e. any functions that need to be exposed to the outside world).
+* `colossus-htb.js` - This is your partner module file, by default it contains a template divided into multiple sections which need to be completed.
+* `colossus-htb-validator.js` - This is the validator file for the configuration object that will be passed into your module.
+* `colossus-htb-exports.js` - A file that contains all of the modules exports (i.e. any functions that need to be exposed to the outside world).
 * `spec` - Contains the unit tests for the module.
     * `mockPartnerConfig.json` - this is a mock partner config for your module that will be used for unit testing.
 
 ##  <a name='gettingStarted'></a>Getting Started
-1. <b>Complete the huddled-masses-htb.js file </b>
-    * huddled-masses-htb.js is where all of your adapter code will live.
+1. <b>Complete the colossus-htb.js file </b>
+    * colossus-htb.js is where all of your adapter code will live.
     * In order to complete the partner module correctly, please refer to the [Partner Module Overview](#overview) and the [Utility Libraries](#helpers) sections.
     * <b>Please refer to the [Partner Requirements and Guidelines](#requirements) when creating your module. Ensure requirements are met to streamline the review process.</b>
-2. <b>Complete the huddled-masses-htb-validator.js file</b>
+2. <b>Complete the colossus-htb-validator.js file</b>
     * This file is where your partner-specific configurations will need to be validated.
     * Things like type and null checks will be done here.
-3. <b>Complete the huddled-masses-htb-exports.js file</b>
-    * This file will contain any functions that need to be exported or exposed to the outside world. Things like render functions, custom callbacks, etc. Any legacy render functions will also need to be exposed here. Anything added to the `shellInterface.HuddledMassesHtb` will be accessible through `window.headertag.HuddledMassesHtb`
+3. <b>Complete the colossus-htb-exports.js file</b>
+    * This file will contain any functions that need to be exported or exposed to the outside world. Things like render functions, custom callbacks, etc. Any legacy render functions will also need to be exposed here. Anything added to the `shellInterface.ColossusHtb` will be accessible through `window.headertag.ColossusHtb`
 4. <b> Run & Create Unit tests for your module</b>
     * Inside the spec folder you will find a set of basic unit tests for your module.
     * You must pass these basic unit tests before submitting your module.
@@ -57,7 +57,7 @@ for (var i = 0; i < 10; i++) {
     w = w.parent;
     if (w.headertag) {
         try {
-            w.headertag.HuddledMassesHtb.render(document, %%PATTERN:TARGETINGMAP%%, '%%WIDTH%%', '%%HEIGHT%%');
+            w.headertag.ColossusHtb.render(document, %%PATTERN:TARGETINGMAP%%, '%%WIDTH%%', '%%HEIGHT%%');
             break;
         } catch (e) {
             continue;
@@ -133,7 +133,7 @@ Example Partner Configuration Mapping
 ```javascript
 {
     "partners": {
-        "HuddledMassesHtb": {
+        "ColossusHtb": {
             "enabled": true,
             "configs": {
                 "xSlots": {
@@ -162,7 +162,7 @@ Each parcel is an object in the following form:
 
 ```javascript
 {
-    "partnerId": "HUDM",
+    "partnerId": "CLSS",
     "htSlot": {
       "__type__": "HeaderTagSlot"
     },
@@ -204,20 +204,20 @@ The wrapper requests demand from the partner modules for the required slots (pro
 
 ## <a name='creatingPartnerModule'></a> Creating a Partner Module
 
-In this section you will be filling out the huddled-masses-htb.js, huddled-masses-htb-exports.js, and the huddled-masses-htb-validator.js files to create your module.
+In this section you will be filling out the colossus-htb.js, colossus-htb-exports.js, and the colossus-htb-validator.js files to create your module.
 
-### Step 0: Config Validation (`huddled-masses-htb-validator.js`)
+### Step 0: Config Validation (`colossus-htb-validator.js`)
 Before you get started on writing the actual code for your module, you need to figure out what your partner configuration (refer to [Configuration](#configuration)) object will look like. This is crucial because it will determine the input (parcels) to your module's core functions.
 
-Once you have a basic idea of what this will look like, and how you will uniquely identify each slot on your server (via xSlot placementId or other inventory codes) you will need to validate this configuration. This validation will be performed by the wrapper using the `huddled-masses-htb-validator.js` file.
+Once you have a basic idea of what this will look like, and how you will uniquely identify each slot on your server (via xSlot placementId or other inventory codes) you will need to validate this configuration. This validation will be performed by the wrapper using the `colossus-htb-validator.js` file.
 
-The `huddled-masses-htb-validator.js` file contains a single export, a `partnerValidator` function, that takes in the configuration object that will be fed to your module's constructor (refer to [Configuration](#configuration) for an example layout) and validates it via type checks. The type checks are performed using an external library called `schema-inspector`, for which the documentation can be found here https://github.com/Atinux/schema-inspector.
+The `colossus-htb-validator.js` file contains a single export, a `partnerValidator` function, that takes in the configuration object that will be fed to your module's constructor (refer to [Configuration](#configuration) for an example layout) and validates it via type checks. The type checks are performed using an external library called `schema-inspector`, for which the documentation can be found here https://github.com/Atinux/schema-inspector.
 
-We have provided a very basic validation schema in `huddled-masses-htb-validator.js` that is based off of the example `mockPartnerConfig.js` object found in the `spec/support` directory for testing (refer to the [Testing](#testing) section for the testing structure).
+We have provided a very basic validation schema in `colossus-htb-validator.js` that is based off of the example `mockPartnerConfig.js` object found in the `spec/support` directory for testing (refer to the [Testing](#testing) section for the testing structure).
 
 Once you have filled this file out, you can continue actually writing your module!
 
-### Step 1: Partner Configuration (`huddled-masses-htb.js`)
+### Step 1: Partner Configuration (`colossus-htb.js`)
 This section involves setting up the general partner configuration such as name, default pricing strategy as well as the general format of incoming/outgoing bids for the adapter. Please read the following descriptions and update the `__profile` variable if necessary.
 
 * <u>partnerId</u> - This is simply the name of our module, generally if your module is a bidder the name will end with Htb. The format of the name should be PartnerName{Type}.
@@ -263,7 +263,7 @@ The last three properties are critical for the wrapper to understand how to inte
 Please also fill out the `bidTransformerConfigs` according to your module's bid response cpm format.
 Refer to the below [BidRoundingTransformer](#bidRounding) section for details on how the bidTransformer works. It is <b>crucial</b> that you fill this out correctly and output your bid in <b><u>CENTS</u></b>, otherwise all of your cpm values will be incorrectly formated (i.e. passing dollars instead of cents).
 
-### Step 2: Generate Request URL (`huddled-masses-htb.js`)
+### Step 2: Generate Request URL (`colossus-htb.js`)
 This step is for crafting a bid request url given a specific set of parcels.
 
 For this step, you must fill out the `generateRequestObj(returnParcels)` function. This function takes in an array of returnParcels.
@@ -300,14 +300,14 @@ The final returned object should looks something like this:
 
 More information can be found in the comment section of the function itself.
 
-### Step 3: Response Callback (`huddled-masses-htb.js`)
+### Step 3: Response Callback (`colossus-htb.js`)
 Once the request from Step 2 finishes the `adResponseCallback` will be called to store the returned response in a `adResponseStore` object.
 
 If `__profile.callbackType` is set to `CALLBACK_NAME` or `NONE`, the wrapper will handle the callback for you and you can remove this function. If it is set to ID, you must retrieve the callback ID from the network response and store that response in the `_adResponseStore` object keyed by the callback ID.
 
 See the function in the template for details.
 
-### Step 4: Parsing and Storing Demand (`huddled-masses-htb.js`)
+### Step 4: Parsing and Storing Demand (`colossus-htb.js`)
 In this step the adapter must parse the returned demand from the bid response and attach it the returnParcels objects.
 The returnParcels array will be one of the same arrays that was passed to `generateRequestObj` earlier.
 
@@ -331,7 +331,7 @@ After filling out these objects, the resulting returnParcel objects should look 
 
 ```javascript
 {
-    "partnerId": "HUDM",
+    "partnerId": "CLSS",
     "htSlot": {
       "__type__": "HeaderTagSlot"
     },
@@ -346,8 +346,8 @@ After filling out these objects, the resulting returnParcel objects should look 
     // notice these new fields with demand
     "targetingType": "slot"
     "targeting" : {
-        "ix_hudm_id": ["_230l09jd2"],
-        "ix_hudm_cpm": ["300x250_2.50"]
+        "ix_clss_id": ["_230l09jd2"],
+        "ix_clss_cpm": ["300x250_2.50"]
     },
     "price": 2.50,
     "size": [300,250],
@@ -355,7 +355,7 @@ After filling out these objects, the resulting returnParcel objects should look 
 }
 ```
 
-### Step 5: Rendering (`huddled-masses-htb.js`)
+### Step 5: Rendering (`colossus-htb.js`)
 This step is for rendering the winning creative. If the partner module's line item wins, the creative code will be returned and inserted into the iframe for that googletag slot. The standard creative code will contain a call to the partner module's specific `render` function.
 
 The adm passed into this function will be the same bidCreative that was earlier attached to a given parcel object.
@@ -363,12 +363,12 @@ They are matched via the id targeting key.
 
 The included `render` function should work as is for most partners, as it simply involves a call to document.write to write the creative to the iframe in which it was passed into by dfp.
 
-### Step 6: Exports (`huddled-masses-htb-exports.js`)
+### Step 6: Exports (`colossus-htb-exports.js`)
 In this step, you will be required to fill out the exports file for your module. This file will contain all of the functions that will need to be exposed to outside page if they need to be accessed outside of the wrapper. In the usual case, all you will need to change in this file is your partner module's name in the included snippet:
 
 ```javascript
-shellInterface.HuddledMassesHtb = { //shell interface is the window variable that is accessable through the window object, currently this will always be window.headertag
-    render: SpaceCamp.services.RenderService.renderDfpAd.bind(null, 'HuddledMassesHtb')
+shellInterface.ColossusHtb = { //shell interface is the window variable that is accessable through the window object, currently this will always be window.headertag
+    render: SpaceCamp.services.RenderService.renderDfpAd.bind(null, 'ColossusHtb')
 };
 ```
 
@@ -377,18 +377,18 @@ This snippet, exposes your module's render function to the outside world via the
 If your module requires using a custom adResponse callback via Partner.CallbackTypes.ID callback type, that callback will need to be exposed here. Which would look something like this:
 
 ```javascript
-if (__directInterface.Layers.PartnersLayer.Partners.HuddledMassesHtb) {
-    shellInterface.HuddledMassesHtb = shellInterface.HuddledMassesHtb || {};
-    shellInterface.HuddledMassesHtb.adResponseCallback = __directInterface.Layers.PartnersLayer.Partners.HuddledMassesHtb.adResponseCallback;
+if (__directInterface.Layers.PartnersLayer.Partners.ColossusHtb) {
+    shellInterface.ColossusHtb = shellInterface.ColossusHtb || {};
+    shellInterface.ColossusHtb.adResponseCallback = __directInterface.Layers.PartnersLayer.Partners.ColossusHtb.adResponseCallback;
 }
 ```
 
 If your module requires using a custom adResponse callback via Partner.CallbackTypes.NAME callback type, that callback swill need to be exposed here. Which would look something like this:
 
 ```javascript
-if (__directInterface.Layers.PartnersLayer.Partners.HuddledMassesHtb) {
-    shellInterface.HuddledMassesHtb = shellInterface.HuddledMassesHtb || {};
-    shellInterface.HuddledMassesHtb.adResponseCallbacks = __directInterface.Layers.PartnersLayer.Partners.HuddledMassesHtb.adResponseCallbacks;
+if (__directInterface.Layers.PartnersLayer.Partners.ColossusHtb) {
+    shellInterface.ColossusHtb = shellInterface.ColossusHtb || {};
+    shellInterface.ColossusHtb.adResponseCallbacks = __directInterface.Layers.PartnersLayer.Partners.ColossusHtb.adResponseCallbacks;
 }
 ```
 
@@ -515,7 +515,7 @@ For example, `mockPartnerConfig.json` contains a sample partner config. Here are
 
 ```javascript
 var returnParcels = [{
-    partnerId: 'HuddledMassesHtb',
+    partnerId: 'ColossusHtb',
     htSlot: { getId: function () {
         return "htSlot1"
     } },
@@ -523,7 +523,7 @@ var returnParcels = [{
     xSlotRef: { placementId: '54321', sizes: [ [300,250] ] },
     requestId: '_1496788873668',
   },{
-    partnerId: 'HuddledMassesHtb',
+    partnerId: 'ColossusHtb',
     htSlot: { getId: function () {
         return "htSlot1"
     } },
@@ -531,7 +531,7 @@ var returnParcels = [{
     xSlotRef: { placementId: '12345', sizes: [ [300,600] ] },
     requestId: '_1496788873668',
   },{
-    partnerId: 'HuddledMassesHtb',
+    partnerId: 'ColossusHtb',
     htSlot: { getId: function () {
         return "htSlot2"
     } },

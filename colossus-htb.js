@@ -30,7 +30,7 @@ var RenderService;
 
 //? if (DEBUG) {
 var ConfigValidators = require('config-validators.js');
-var PartnerSpecificValidator = require('huddled-masses-htb-validator.js');
+var PartnerSpecificValidator = require('colossus-htb-validator.js');
 var Scribe = require('scribe.js');
 var Whoopsie = require('whoopsie.js');
 //? }
@@ -44,7 +44,7 @@ var Whoopsie = require('whoopsie.js');
  *
  * @class
  */
-function HuddledMassesHtb(configs) {
+function ColossusHtb(configs) {
     /* =====================================
      * Data
      * ---------------------------------- */
@@ -168,7 +168,7 @@ function HuddledMassesHtb(configs) {
         var callbackId = System.generateUniqueId();
 
         /* Change this to your bidder endpoint.*/
-        var baseUrl = protocol + '//huddledmassessupply.com';
+        var baseUrl = protocol + '//Colossussupply.com';
 
         /* ---------------- Craft bid request using the above returnParcels --------- */
 
@@ -384,9 +384,9 @@ function HuddledMassesHtb(configs) {
 
         /* ---------- Please fill out this partner profile according to your module ------------*/
         __profile = {
-            partnerId: 'HuddledMassesHtb', // PartnerName
-            namespace: 'HuddledMassesHtb', // Should be same as partnerName
-            statsId: 'HUDM', // Unique partner identifier
+            partnerId: 'ColossusHtb', // PartnerName
+            namespace: 'ColossusHtb', // Should be same as partnerName
+            statsId: 'CLSS', // Unique partner identifier
             version: '2.0.0',
             targetingType: 'slot',
             enabledAnalytics: {
@@ -403,10 +403,10 @@ function HuddledMassesHtb(configs) {
                 }
             },
             targetingKeys: { // Targeting keys for demand, should follow format ix_{statsId}_id
-                id: 'ix_hudm_id',
-                om: 'ix_hudm_cpm',
-                pm: 'ix_hudm_cpm',
-                pmid: 'ix_hudm_dealid'
+                id: 'ix_clss_id',
+                om: 'ix_clss_cpm',
+                pm: 'ix_clss_cpm',
+                pmid: 'ix_clss_dealid'
             },
             lineItemType: Constants.LineItemTypes.ID_AND_SIZE,
             callbackType: Partner.CallbackTypes.NONE, // Callback type, please refer to the readme for details
@@ -493,7 +493,7 @@ function HuddledMassesHtb(configs) {
          * ---------------------------------- */
 
         //? if (DEBUG) {
-        __type__: 'HuddledMassesHtb',
+        __type__: 'ColossusHtb',
         //? }
 
         //? if (TEST) {
@@ -525,4 +525,4 @@ function HuddledMassesHtb(configs) {
 // Exports /////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-module.exports = HuddledMassesHtb;
+module.exports = ColossusHtb;
