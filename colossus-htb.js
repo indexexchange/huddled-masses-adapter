@@ -19,7 +19,7 @@ var RenderService;
 
 //? if (DEBUG) {
 var ConfigValidators = require('config-validators.js');
-var PartnerSpecificValidator = require('%%partner-name%%-%%partnertype%%-validator.js');
+var PartnerSpecificValidator = require('colossus-htb-validator.js');
 var Scribe = require('scribe.js');
 var Whoopsie = require('whoopsie.js');
 //? }
@@ -33,7 +33,7 @@ var Whoopsie = require('whoopsie.js');
  *
  * @class
  */
-function %%PartnerName%%%%PartnerType%%(configs) {
+function ColossusHtb(configs) {
     /* =====================================
      * Data
      * ---------------------------------- */
@@ -410,9 +410,9 @@ function %%PartnerName%%%%PartnerType%%(configs) {
 
         /* ---------- Please fill out this partner profile according to your module ------------ */
         __profile = {
-            partnerId: '%%PartnerName%%%%PartnerType%%',
-            namespace: '%%PartnerName%%%%PartnerType%%',
-            statsId: '%%PARTNERID%%',
+            partnerId: 'ColossusHtb',
+            namespace: 'ColossusHtb',
+            statsId: 'CLSS',
             version: '2.0.0',
             targetingType: 'slot',
             enabledAnalytics: {
@@ -431,10 +431,10 @@ function %%PartnerName%%%%PartnerType%%(configs) {
 
             /* Targeting keys for demand, should follow format ix_{statsId}_id */
             targetingKeys: {
-                id: 'ix_%%partnerid%%_id',
-                om: 'ix_%%partnerid%%_cpm',
-                pm: 'ix_%%partnerid%%_cpm',
-                pmid: 'ix_%%partnerid%%_dealid'
+                id: 'ix_clss_id',
+                om: 'ix_clss_cpm',
+                pm: 'ix_clss_cpm',
+                pmid: 'ix_clss_dealid'
             },
 
             /* The bid price unit (in cents) the endpoint returns, please refer to the readme for details */
@@ -471,7 +471,7 @@ function %%PartnerName%%%%PartnerType%%(configs) {
          * ---------------------------------- */
 
         //? if (DEBUG) {
-        __type__: '%%PartnerName%%%%PartnerType%%',
+        __type__: 'ColossusHtb',
         //? }
 
         //? if (TEST) {
@@ -502,4 +502,4 @@ function %%PartnerName%%%%PartnerType%%(configs) {
 // Exports /////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-module.exports = %%PartnerName%%%%PartnerType%%;
+module.exports = ColossusHtb;
