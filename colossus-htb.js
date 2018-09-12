@@ -1,15 +1,3 @@
-/**
- * @author:    Partner
- * @license:   UNLICENSED
- *
- * @copyright: Copyright (c) 2017 by Index Exchange. All rights reserved.
- *
- * The information contained within this document is confidential, copyrighted
- * and or a trade secret. No part of this document may be reproduced or
- * distributed in any form or by any means, in whole or in part, without the
- * prior written permission of Index Exchange.
- */
-
 'use strict';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,13 +13,13 @@ var SpaceCamp = require('space-camp.js');
 var System = require('system.js');
 var Network = require('network.js');
 var Utilities = require('utilities.js');
+
 var ComplianceService;
-var EventsService;
 var RenderService;
 
 //? if (DEBUG) {
 var ConfigValidators = require('config-validators.js');
-var PartnerSpecificValidator = require('huddled-masses-htb-validator.js');
+var PartnerSpecificValidator = require('%%partner-name%%-%%partnertype%%-validator.js');
 var Scribe = require('scribe.js');
 var Whoopsie = require('whoopsie.js');
 //? }
@@ -45,7 +33,7 @@ var Whoopsie = require('whoopsie.js');
  *
  * @class
  */
-function HuddledMassesHtb(configs) {
+function %%PartnerName%%%%PartnerType%%(configs) {
     /* =====================================
      * Data
      * ---------------------------------- */
@@ -83,7 +71,6 @@ function HuddledMassesHtb(configs) {
      * @return {object}
      */
     function __generateRequestObj(returnParcels) {
-
         /* =============================================================================
          * STEP 2  | Generate Request URL
          * -----------------------------------------------------------------------------
@@ -145,7 +132,7 @@ function HuddledMassesHtb(configs) {
         var queryObj = {};
         var callbackId = System.generateUniqueId();
 
-        /* Change this to your bidder endpoint.*/
+        /* Change this to your bidder endpoint. */
         var baseUrl = Browser.getProtocol() + '//someAdapterEndpoint.com/bid';
 
         /* ------------------------ Get consent information -------------------------
@@ -166,7 +153,7 @@ function HuddledMassesHtb(configs) {
          *
          * You can also determine whether or not the publisher has enabled privacy
          * features in their wrapper by querying ComplianceService.isPrivacyEnabled().
-         * 
+         *
          * This function will return a boolean, which indicates whether the wrapper's
          * privacy features are on (true) or off (false). If they are off, the values
          * returned from gdpr.getConsent() are safe defaults and no attempt has been
@@ -200,10 +187,11 @@ function HuddledMassesHtb(configs) {
      * callback type to CallbackTypes.CALLBACK_NAME and omit this function.
      */
     function adResponseCallback(adResponse) {
-        /* get callbackId from adResponse here */
+        /* Get callbackId from adResponse here */
         var callbackId = 0;
         __baseClass._adResponseStore[callbackId] = adResponse;
     }
+
     /* -------------------------------------------------------------------------- */
 
     /* Helpers
@@ -215,15 +203,15 @@ function HuddledMassesHtb(configs) {
      *
     */
 
-     /**
+    /**
      * This function will render the pixel given.
      * @param  {string} pixelUrl Tracking pixel img url.
      */
     function __renderPixel(pixelUrl) {
-        if (pixelUrl){
+        if (pixelUrl) {
             Network.img({
                 url: decodeURIComponent(pixelUrl),
-                method: 'GET',
+                method: 'GET'
             });
         }
     }
@@ -242,8 +230,6 @@ function HuddledMassesHtb(configs) {
      * attached to each one of the objects for which the demand was originally requested for.
      */
     function __parseResponse(sessionId, adResponse, returnParcels) {
-
-
         /* =============================================================================
          * STEP 4  | Parse & store demand response
          * -----------------------------------------------------------------------------
@@ -263,14 +249,13 @@ function HuddledMassesHtb(configs) {
          *
          */
 
-        /* ---------- Process adResponse and extract the bids into the bids array ------------*/
+        /* ---------- Process adResponse and extract the bids into the bids array ------------ */
 
         var bids = adResponse;
 
         /* --------------------------------------------------------------------------------- */
 
         for (var j = 0; j < returnParcels.length; j++) {
-
             var curReturnParcel = returnParcels[j];
 
             var headerStatsInfo = {};
@@ -281,7 +266,6 @@ function HuddledMassesHtb(configs) {
             var curBid;
 
             for (var i = 0; i < bids.length; i++) {
-
                 /**
                  * This section maps internal returnParcels and demand returned from the bid request.
                  * In order to match them correctly, they must be matched via some criteria. This
@@ -293,6 +277,7 @@ function HuddledMassesHtb(configs) {
                 if (curReturnParcel.xSlotRef.someCriteria === bids[i].someCriteria) {
                     curBid = bids[i];
                     bids.splice(i, 1);
+
                     break;
                 }
             }
@@ -303,30 +288,31 @@ function HuddledMassesHtb(configs) {
                     __baseClass._emitStatsEvent(sessionId, 'hs_slot_pass', headerStatsInfo);
                 }
                 curReturnParcel.pass = true;
+
                 continue;
             }
 
-            /* ---------- Fill the bid variables with data from the bid response here. ------------*/
+            /* ---------- Fill the bid variables with data from the bid response here. ------------ */
 
             /* Using the above variable, curBid, extract various information about the bid and assign it to
              * these local variables */
 
-            /* the bid price for the given slot */
+            /* The bid price for the given slot */
             var bidPrice = curBid.price;
 
-            /* the size of the given slot */
+            /* The size of the given slot */
             var bidSize = [Number(curBid.width), Number(curBid.height)];
 
-            /* the creative/adm for the given slot that will be rendered if is the winner.
+            /* The creative/adm for the given slot that will be rendered if is the winner.
              * Please make sure the URL is decoded and ready to be document.written.
              */
             var bidCreative = curBid.adm;
 
-            /* the dealId if applicable for this slot. */
+            /* The dealId if applicable for this slot. */
             var bidDealId = curBid.dealid;
 
-            /* explicitly pass */
-            var bidIsPass = bidPrice <= 0 ? true : false;
+            /* Explicitly pass */
+            var bidIsPass = bidPrice <= 0;
 
             /* OPTIONAL: tracking pixel url to be fired AFTER rendering a winning creative.
             * If firing a tracking pixel is not required or the pixel url is part of the adm,
@@ -334,7 +320,7 @@ function HuddledMassesHtb(configs) {
             */
             var pixelUrl = '';
 
-            /* ---------------------------------------------------------------------------------------*/
+            /* --------------------------------------------------------------------------------------- */
 
             curBid = null;
             if (bidIsPass) {
@@ -345,6 +331,7 @@ function HuddledMassesHtb(configs) {
                     __baseClass._emitStatsEvent(sessionId, 'hs_slot_pass', headerStatsInfo);
                 }
                 curReturnParcel.pass = true;
+
                 continue;
             }
 
@@ -382,6 +369,11 @@ function HuddledMassesHtb(configs) {
             curReturnParcel.price = Number(__baseClass._bidTransformers.price.apply(bidPrice));
             //? }
 
+            var expiry = 0;
+            if (__profile.features.demandExpiry.enabled) {
+                expiry = __profile.features.demandExpiry.value + System.now();
+            }
+
             var pubKitAdId = RenderService.registerAd({
                 sessionId: sessionId,
                 partnerId: __profile.partnerId,
@@ -389,8 +381,8 @@ function HuddledMassesHtb(configs) {
                 requestId: curReturnParcel.requestId,
                 size: curReturnParcel.size,
                 price: targetingCpm,
-                dealId: bidDealId || undefined,
-                timeOfExpiry: __profile.features.demandExpiry.enabled ? (__profile.features.demandExpiry.value + System.now()) : 0,
+                dealId: bidDealId || null,
+                timeOfExpiry: expiry,
                 auxFn: __renderPixel,
                 auxArgs: [pixelUrl]
             });
@@ -407,7 +399,6 @@ function HuddledMassesHtb(configs) {
 
     (function __constructor() {
         ComplianceService = SpaceCamp.services.ComplianceService;
-        EventsService = SpaceCamp.services.EventsService;
         RenderService = SpaceCamp.services.RenderService;
 
         /* =============================================================================
@@ -417,11 +408,11 @@ function HuddledMassesHtb(configs) {
          * Please fill out the below partner profile according to the steps in the README doc.
          */
 
-        /* ---------- Please fill out this partner profile according to your module ------------*/
+        /* ---------- Please fill out this partner profile according to your module ------------ */
         __profile = {
-            partnerId: 'HuddledMassesHtb', // PartnerName
-            namespace: 'HuddledMassesHtb', // Should be same as partnerName
-            statsId: 'HUDM', // Unique partner identifier
+            partnerId: '%%PartnerName%%%%PartnerType%%',
+            namespace: '%%PartnerName%%%%PartnerType%%',
+            statsId: '%%PARTNERID%%',
             version: '2.0.0',
             targetingType: 'slot',
             enabledAnalytics: {
@@ -437,19 +428,24 @@ function HuddledMassesHtb(configs) {
                     value: 0
                 }
             },
-            targetingKeys: { // Targeting keys for demand, should follow format ix_{statsId}_id
-                id: 'ix_hudm_id',
-                om: 'ix_hudm_cpm',
-                pm: 'ix_hudm_cpm',
-                pmid: 'ix_hudm_dealid'
+
+            /* Targeting keys for demand, should follow format ix_{statsId}_id */
+            targetingKeys: {
+                id: 'ix_%%partnerid%%_id',
+                om: 'ix_%%partnerid%%_cpm',
+                pm: 'ix_%%partnerid%%_cpm',
+                pmid: 'ix_%%partnerid%%_dealid'
             },
-            bidUnitInCents: 1, // The bid price unit (in cents) the endpoint returns, please refer to the readme for details
+
+            /* The bid price unit (in cents) the endpoint returns, please refer to the readme for details */
+            bidUnitInCents: 1,
             lineItemType: Constants.LineItemTypes.ID_AND_SIZE,
-            callbackType: Partner.CallbackTypes.ID, // Callback type, please refer to the readme for details
-            architecture: Partner.Architectures.SRA, // Request architecture, please refer to the readme for details
-            requestType: Partner.RequestTypes.ANY // Request type, jsonp, ajax, or any.
+            callbackType: Partner.CallbackTypes.ID,
+            architecture: Partner.Architectures.SRA,
+            requestType: Partner.RequestTypes.ANY
         };
-        /* ---------------------------------------------------------------------------------------*/
+
+        /* --------------------------------------------------------------------------------------- */
 
         //? if (DEBUG) {
         var results = ConfigValidators.partnerBaseConfig(configs) || PartnerSpecificValidator(configs);
@@ -475,7 +471,7 @@ function HuddledMassesHtb(configs) {
          * ---------------------------------- */
 
         //? if (DEBUG) {
-        __type__: 'HuddledMassesHtb',
+        __type__: '%%PartnerName%%%%PartnerType%%',
         //? }
 
         //? if (TEST) {
@@ -495,7 +491,7 @@ function HuddledMassesHtb(configs) {
         //? if (TEST) {
         parseResponse: __parseResponse,
         generateRequestObj: __generateRequestObj,
-        adResponseCallback: adResponseCallback,
+        adResponseCallback: adResponseCallback
         //? }
     };
 
@@ -506,4 +502,4 @@ function HuddledMassesHtb(configs) {
 // Exports /////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-module.exports = HuddledMassesHtb;
+module.exports = %%PartnerName%%%%PartnerType%%;
