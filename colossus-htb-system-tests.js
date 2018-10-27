@@ -39,36 +39,57 @@ function getConfig() {
 }
 
 function validateBidRequest(request) {
-    expect(request.host).toBe('colossusssp.com');
-    expect(request.query.c).toBe('o');
-    expect(request.query.m).toBe('multi');
+    expect(request).toEqual(jasmine.objectContaining({
+        host: 'colossusssp.com',
+        query: jasmine.objectContaining({
+            c: 'o',
+            m: 'multi'
+        }),
+        body: jasmine.any(String)
+    }));
+    var body = JSON.parse(request.body);
+    expect(body).toEqual(jasmine.objectContaining({
+        host: jasmine.any(String),
+        page: jasmine.any(String),
+        deviceHeight: jasmine.any(Number),
+        deviceWidth: jasmine.any(Number),
+        secure: jasmine.any(Number),
+        wrapper: 'index',
+        placements: jasmine.arrayContaining([
+            jasmine.objectContaining({
+                bidId: jasmine.any(String),
+                placementId: jasmine.any(Number)
+            }),
+            jasmine.objectContaining({
+                bidId: jasmine.any(String),
+                placementId: jasmine.any(Number)
+            })
+        ])
+    }));
 }
 
 function getValidResponse(request, creative) {
-    return JSON.stringify([
-        {
+    var response = [];
+    var body = JSON.parse(request.body);
+    var placements = body.placements;
+    var len = placements.length;
+    for (var i = 0; i < len; i++) {
+        var placement = placements[i];
+        var cpm = (i + 1) * 100;
+        response.push({
             width: 300,
             height: 250,
-            cpm: 200,
+            cpm: cpm,
             ad: creative,
-            requestId: 123,
+            requestId: placement.bidId,
             ttl: 120,
             creativeId: '123',
             currency: 'USD',
             mediaType: 'banner'
-        },
-        {
-            width: 300,
-            height: 250,
-            cpm: 100,
-            ad: creative,
-            requestId: 124,
-            ttl: 120,
-            creativeId: '123',
-            currency: 'USD',
-            mediaType: 'banner'
-        }
-    ]);
+        });
+    }
+
+    return JSON.stringify(response);
 }
 
 function validateTargeting(targetingMap) {
@@ -83,38 +104,34 @@ function getPassResponse() {
 }
 
 function getValidBidResponseWithDeal(request, creative) {
-    return JSON.stringify([
-        {
+    var response = [];
+    var body = JSON.parse(request.body);
+    var placements = body.placements;
+    var len = placements.length;
+    for (var i = 0; i < len; i++) {
+        var placement = placements[i];
+        var cpm = (i + 1) * 100;
+        response.push({
             width: 300,
             height: 250,
-            cpm: 200,
+            cpm: cpm,
             ad: creative,
-            requestId: 123,
+            requestId: placement.bidId,
             ttl: 120,
             creativeId: '123',
+            dealId: 'deal_test_' + i,
             currency: 'USD',
-            dealId: 'deal_test_1',
             mediaType: 'banner'
-        },
-        {
-            width: 300,
-            height: 250,
-            cpm: 100,
-            ad: creative,
-            requestId: 124,
-            ttl: 120,
-            creativeId: '123',
-            currency: 'USD',
-            dealId: 'deal_test_2',
-            mediaType: 'banner'
-        }
-    ]);
+        });
+    }
+
+    return JSON.stringify(response);
 }
 
 function validateTargetingWithDeal(targetingMap) {
     expect(targetingMap).toEqual(jasmine.objectContaining({
         ix_clss_cpm: jasmine.arrayContaining(['300x250_200', '300x250_100']),
-        ix_clss_dealid: jasmine.arrayContaining(['300x250_deal_test_1', '300x250_deal_test_2']),
+        ix_clss_dealid: jasmine.arrayContaining(['300x250_deal_test_0', '300x250_deal_test_1']),
         ix_clss_id: jasmine.arrayContaining([jasmine.any(String), jasmine.any(String)])
     }));
 }
