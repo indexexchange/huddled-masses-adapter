@@ -12,7 +12,6 @@ var Size = require('size.js');
 var SpaceCamp = require('space-camp.js');
 var System = require('system.js');
 var Network = require('network.js');
-var Utilities = require('utilities.js');
 
 var ComplianceService;
 var RenderService;
@@ -129,11 +128,28 @@ function ColossusHtb(configs) {
          */
 
         /* ---------------------- PUT CODE HERE ------------------------------------ */
-        var queryObj = {};
+        var placements = [];
+        var len = returnParcels.length;
+        for (var i = 0; i < len; i++) {
+            placements.push({
+                placementId: returnParcels[i].xSlotRef.placementId,
+                bidId: returnParcels[i].requestId
+            });
+        }
+        var secure = Browser.getProtocol() === 'https:' ? 1 : 0;
+        var queryObj = {
+            host: Browser.getHostname(),
+            page: Browser.getPageUrl(),
+            deviceHeight: Browser.getScreenHeight(),
+            deviceWidth: Browser.getScreenWidth(),
+            placements: placements,
+            secure: secure,
+            wrapper: 'index'
+        };
         var callbackId = System.generateUniqueId();
 
         /* Change this to your bidder endpoint. */
-        var baseUrl = Browser.getProtocol() + '//someAdapterEndpoint.com/bid';
+        var baseUrl = Browser.getProtocol() + '//colossusssp.com/?c=o&m=multi';
 
         /* ------------------------ Get consent information -------------------------
          * If you want to implement GDPR consent in your adapter, use the function
@@ -159,8 +175,8 @@ function ColossusHtb(configs) {
          * returned from gdpr.getConsent() are safe defaults and no attempt has been
          * made by the wrapper to contact a Consent Management Platform.
          */
-        var gdprStatus = ComplianceService.gdpr.getConsent();
-        var privacyEnabled = ComplianceService.isPrivacyEnabled();
+        queryObj.gdprStatus = ComplianceService.gdpr.getConsent();
+        queryObj.privacyEnabled = ComplianceService.isPrivacyEnabled();
 
         /* ---------------- Craft bid request using the above returnParcels --------- */
 
@@ -171,7 +187,11 @@ function ColossusHtb(configs) {
         return {
             url: baseUrl,
             data: queryObj,
-            callbackId: callbackId
+            callbackId: callbackId,
+            networkParamOverrides: {
+                method: 'POST',
+                contentType: 'text/plain'
+            }
         };
     }
 
@@ -274,7 +294,7 @@ function ColossusHtb(configs) {
                  */
 
                 /* ----------- Fill this out to find a matching bid for the current parcel ------------- */
-                if (curReturnParcel.xSlotRef.someCriteria === bids[i].someCriteria) {
+                if (curReturnParcel.xSlotRef.requestId === bids[i].bidId) {
                     curBid = bids[i];
                     bids.splice(i, 1);
 
@@ -298,7 +318,7 @@ function ColossusHtb(configs) {
              * these local variables */
 
             /* The bid price for the given slot */
-            var bidPrice = curBid.price;
+            var bidPrice = curBid.cpm;
 
             /* The size of the given slot */
             var bidSize = [Number(curBid.width), Number(curBid.height)];
@@ -306,10 +326,10 @@ function ColossusHtb(configs) {
             /* The creative/adm for the given slot that will be rendered if is the winner.
              * Please make sure the URL is decoded and ready to be document.written.
              */
-            var bidCreative = curBid.adm;
+            var bidCreative = curBid.ad;
 
             /* The dealId if applicable for this slot. */
-            var bidDealId = curBid.dealid;
+            var bidDealId = curBid.dealId;
 
             /* Explicitly pass */
             var bidIsPass = bidPrice <= 0;
@@ -386,7 +406,6 @@ function ColossusHtb(configs) {
                 auxFn: __renderPixel,
                 auxArgs: [pixelUrl]
             });
-
             //? if (FEATURES.INTERNAL_RENDER) {
             curReturnParcel.targeting.pubKitAdId = pubKitAdId;
             //? }
@@ -440,7 +459,7 @@ function ColossusHtb(configs) {
             /* The bid price unit (in cents) the endpoint returns, please refer to the readme for details */
             bidUnitInCents: 1,
             lineItemType: Constants.LineItemTypes.ID_AND_SIZE,
-            callbackType: Partner.CallbackTypes.ID,
+            callbackType: Partner.CallbackTypes.NONE,
             architecture: Partner.Architectures.SRA,
             requestType: Partner.RequestTypes.ANY
         };
@@ -490,8 +509,7 @@ function ColossusHtb(configs) {
 
         //? if (TEST) {
         parseResponse: __parseResponse,
-        generateRequestObj: __generateRequestObj,
-        adResponseCallback: adResponseCallback
+        generateRequestObj: __generateRequestObj
         //? }
     };
 

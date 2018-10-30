@@ -30,7 +30,7 @@ function partnerValidator(configs) {
                         type: 'object',
                         properties: {
                             placementId: {
-                                type: 'string',
+                                type: 'number',
                                 minLength: 1
                             }
                         }
